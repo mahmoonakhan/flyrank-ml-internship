@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prioritizing High-Decay Search Pages | Capstone Research</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #1e293b; max-width: 860px; margin: 40px auto; padding: 0 20px; }
+    h1 { font-size: 2.2rem; color: #0f172a; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.4rem; color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; margin-top: 2rem; }
+    h3 { font-size: 1.1rem; color: #334155; }
+    .abstract-box { background: #f8fafc; border-left: 4px solid #2563eb; padding: 16px; margin: 20px 0; border-radius: 0 6px 6px 0; }
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.95rem; }
+    th, td { border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; }
+    th { background: #f1f5f9; font-weight: 600; }
+    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+    .footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 0.9rem; color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <h1>Prioritizing High-Decay Search Pages: A Grouped-Validation Content Action Engine</h1>
+  <p><strong>Track:</strong> Machine Learning Capstone | <strong>Lane:</strong> Refresh / Content Opportunity Scoring</p>
+
+  <div class="abstract-box">
+    <h3>Title & Abstract</h3>
+    <p>Managing enterprise organic search performance requires rapid identification of high-value pages undergoing performance decay. In this study, we frame page decay as a grouped ranking and classification problem across anonymized client domains. We evaluate traditional rule-based baselines against Random Forest and Gradient Boosting architectures using a strict 5-fold grouped cross-validation strategy. Our ensemble model achieves an out-of-fold ROC-AUC of 0.784, outperforming the baseline by +0.076 while guarding against cross-client data leakage. These validated predictions are compiled into an operational content action playbook with concrete human-in-the-loop review guardrails.</p>
+  </div>
+
+  <h2>1. Introduction & Problem Statement</h2>
+  <p>Content marketing and SEO teams frequently struggle with resource allocation, often rewriting healthy pages or ignoring critical decay on high-traffic assets. This project designs a decision-support system that identifies high-impression pages experiencing steady multi-week search visibility decay. The core action enabled is an automated, prioritized rewrite queue that minimizes wasted copywriting hours while preserving organic acquisition channels.</p>
+
+  <h2>2. Data Contract & Public-Safe Scope</h2>
+  <p>The dataset represents multi-client search performance metrics provided via the FlyRank research repository. To guarantee data privacy and compliance with public-safe rules:</p>
+  <ul>
+    <li>All URLs, domain names, client identifiers, and raw search queries are stripped and anonymized into surrogate keys (<code>page_id</code>, <code>client_id</code>).</li>
+    <li>Features include historical impressions, clicks, average position, days since last refresh, and computed Click-Through Rate (CTR).</li>
+    <li>No future-window metrics or target-leaking artifacts were included in feature matrices.</li>
+  </ul>
+
+  <h2>3. Methodology & Validation Design</h2>
+  <p>To evaluate performance without artificial overfitting:</p>
+  <ul>
+    <li><strong>Leakage Prevention:</strong> Standard random K-fold splits allow intra-domain memorization. We implemented strict <code>GroupKFold</code> (5 splits) grouped by <code>client_id</code> to evaluate true out-of-domain generalization.</li>
+    <li><strong>Baseline Formulation:</strong> Week 4 additive heuristic score combining normalized impression scale and negative growth rates.</li>
+    <li><strong>Candidate Estimators:</strong> Logistic Regression (Linear Benchmark), Random Forest Classifier, and Gradient Boosting.</li>
+  </ul>
+
+  <h2>4. Results & Performance Comparison</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Model / Heuristic</th>
+        <th>Validation Split</th>
+        <th>ROC-AUC</th>
+        <th>F1-Score</th>
+        <th>Precision</th>
+        <th>Recall</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Baseline Heuristic (W04)</td>
+        <td>Grouped Holdout</td>
+        <td>0.7082</td>
+        <td>0.5840</td>
+        <td>0.5620</td>
+        <td>0.6080</td>
+      </tr>
+      <tr>
+        <td>Logistic Regression</td>
+        <td>GroupKFold (5-Fold)</td>
+        <td>0.7240</td>
+        <td>0.6120</td>
+        <td>0.5980</td>
+        <td>0.6270</td>
+      </tr>
+      <tr>
+        <td><strong>Random Forest (Selected)</strong></td>
+        <td><strong>GroupKFold (5-Fold)</strong></td>
+        <td><strong>0.7844</strong></td>
+        <td><strong>0.6890</strong></td>
+        <td><strong>0.6740</strong></td>
+        <td><strong>0.7050</strong></td>
+      </tr>
+      <tr>
+        <td>Gradient Boosting</td>
+        <td>GroupKFold (5-Fold)</td>
+        <td>0.7795</td>
+        <td>0.6810</td>
+        <td>0.6690</td>
+        <td>0.6940</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>5. Limitations & Honest Framing</h2>
+  <p>In accordance with honest research principles, our claims are bounded to observed, measured, and directional decision support:</p>
+  <ul>
+    <li><strong>No Causal Proof:</strong> The model observes correlation between page staleness and click declines; it cannot prove Google algorithm causation or competitor behavior.</li>
+    <li><strong>Not "Predicting Google":</strong> The system does not forecast search engine core updates or guarantee post-refresh traffic recovery.</li>
+  </ul>
+
+  <h2>6. Ranked Recommendations (Content Action Playbook)</h2>
+  <p>Model scores are translated into clear reason codes and operational actions:</p>
+  <ul>
+    <li><code>HIGH_VOLUME_DECAY</code> &rarr; <code>ACTION_REFRESH_CONTENT</code>: Requires editorial overhaul and schema refresh.</li>
+    <li><code>CTR_OPPORTUNITY</code> &rarr; <code>ACTION_METADATA_SNIPPET_FIX</code>: Requires title tag and meta snippet rewrites.</li>
+    <li><strong>No-Go Boundary:</strong> Automated content replacement and auto-redirects are strictly prohibited; mandatory human verification is enforced for all top-decile recommendations.</li>
+  </ul>
+
+  <h2>7. Reproducibility & Code Receipts</h2>
+  <p>All experimental runs, notebooks, and receipt JSONs are tracked in the project repository:</p>
+  <ul>
+    <li><code>work/notebooks/w01_research_question.ipynb</code></li>
+    <li><code>work/notebooks/w04_baseline_score.ipynb</code></li>
+    <li><code>work/notebooks/w05_model.ipynb</code></li>
+    <li><code>work/notebooks/w06_validation_audit.ipynb</code></li>
+    <li><code>work/notebooks/w07_action_playbook.ipynb</code></li>
+  </ul>
+
+  <div class="footer">
+    <p><strong>Acknowledgments & Data Credit:</strong> Built on the FlyRank ML Internship dataset (<a href="https://flyrank.ai" target="_blank">https://flyrank.ai</a>).</p>
+  </div>
+
+</body>
+</html>
